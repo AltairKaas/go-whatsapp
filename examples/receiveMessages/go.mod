@@ -5,4 +5,4 @@ require (
 	github.com/Rhymen/go-whatsapp v0.0.0
 )
 
-replace github.com/Rhymen/go-whatsapp => github.com/AltairKaas/go-whatsapp
+replace github.com/Rhymen/go-whatsapp => ../../
