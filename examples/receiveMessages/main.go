@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/AltairKaas/go-whatsapp"
 	qrcodeTerminal "github.com/Baozisoftware/qrcode-terminal-go"
-	"github.com/Rhymen/go-whatsapp"
 )
 
 type waHandler struct {

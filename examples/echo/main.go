@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/gob"
 	"fmt"
+	"github.com/AltairKaas/go-whatsapp"
 	"github.com/Baozisoftware/qrcode-terminal-go"
-	"github.com/Rhymen/go-whatsapp"
 	"os"
 	"strings"
 	"time"
@@ -34,7 +34,7 @@ func (wh *waHandler) HandleTextMessage(message whatsapp.TextMessage) {
 		Text: message.Text,
 	}
 
-	if err := wh.wac.Send(msg); err != nil {
+	if _, err := wh.wac.Send(msg); err != nil {
 		fmt.Fprintf(os.Stderr, "error sending message: %v\n", err)
 	}
 
