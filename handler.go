@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Rhymen/go-whatsapp/binary"
-	"github.com/Rhymen/go-whatsapp/binary/proto"
+	"github.com/AltairKaas/go-whatsapp/binary"
+	"github.com/AltairKaas/go-whatsapp/binary/proto"
 )
 
 /*
@@ -58,6 +58,22 @@ The DocumentMessageHandler interface needs to be implemented to receive document
 type DocumentMessageHandler interface {
 	Handler
 	HandleDocumentMessage(message DocumentMessage)
+}
+
+/*
+The LiveLocationMessageHandler interface needs to be implemented to receive live location messages dispatched by the dispatcher.
+*/
+type LiveLocationMessageHandler interface {
+	Handler
+	HandleLiveLocationMessage(message LiveLocationMessage)
+}
+
+/*
+The LocationMessageHandler interface needs to be implemented to receive location messages dispatched by the dispatcher.
+*/
+type LocationMessageHandler interface {
+	Handler
+	HandleLocationMessage(message LocationMessage)
 }
 
 /*
@@ -127,50 +143,62 @@ func (wac *Conn) RemoveHandlers() {
 	wac.handler = make([]Handler, 0)
 }
 
-func (wac *Conn) handle(message interface{}) {
+func handleMessage(message interface{}, handlers []Handler) {
 	switch m := message.(type) {
 	case error:
-		for _, h := range wac.handler {
+		for _, h := range handlers {
 			go h.HandleError(m)
 		}
 	case string:
-		for _, h := range wac.handler {
+		for _, h := range handlers {
 			if x, ok := h.(JsonMessageHandler); ok {
 				go x.HandleJsonMessage(m)
 			}
 		}
 	case TextMessage:
-		for _, h := range wac.handler {
+		for _, h := range handlers {
 			if x, ok := h.(TextMessageHandler); ok {
 				go x.HandleTextMessage(m)
 			}
 		}
 	case ImageMessage:
-		for _, h := range wac.handler {
+		for _, h := range handlers {
 			if x, ok := h.(ImageMessageHandler); ok {
 				go x.HandleImageMessage(m)
 			}
 		}
 	case VideoMessage:
-		for _, h := range wac.handler {
+		for _, h := range handlers {
 			if x, ok := h.(VideoMessageHandler); ok {
 				go x.HandleVideoMessage(m)
 			}
 		}
 	case AudioMessage:
-		for _, h := range wac.handler {
+		for _, h := range handlers {
 			if x, ok := h.(AudioMessageHandler); ok {
 				go x.HandleAudioMessage(m)
 			}
 		}
+	case LocationMessage:
+		for _, h := range handlers {
+			if x, ok := h.(LocationMessageHandler); ok {
+				go x.HandleLocationMessage(m)
+			}
+		}
+	case LiveLocationMessage:
+		for _, h := range handlers {
+			if x, ok := h.(LiveLocationMessageHandler); ok {
+				go x.HandleLiveLocationMessage(m)
+			}
+		}
 	case DocumentMessage:
-		for _, h := range wac.handler {
+		for _, h := range handlers {
 			if x, ok := h.(DocumentMessageHandler); ok {
 				go x.HandleDocumentMessage(m)
 			}
 		}
 	case *proto.WebMessageInfo:
-		for _, h := range wac.handler {
+		for _, h := range handlers {
 			if x, ok := h.(RawMessageHandler); ok {
 				go x.HandleRawMessage(m)
 			}
@@ -204,6 +232,10 @@ func (wac *Conn) handleContacts(contacts interface{}) {
 			go x.HandleContactList(contactList)
 		}
 	}
+}
+
+func (wac *Conn) handle(message interface{}) {
+	handleMessage(message, wac.handler)
 }
 
 func (wac *Conn) handleChats(chats interface{}) {

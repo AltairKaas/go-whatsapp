@@ -3,8 +3,8 @@ package whatsapp
 import (
 	"crypto/hmac"
 	"crypto/sha256"
-	"github.com/Rhymen/go-whatsapp/binary"
-	"github.com/Rhymen/go-whatsapp/crypto/cbc"
+	"github.com/AltairKaas/go-whatsapp/binary"
+	"github.com/AltairKaas/go-whatsapp/crypto/cbc"
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 	"io"

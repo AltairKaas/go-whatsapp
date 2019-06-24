@@ -107,14 +107,18 @@ Creates a new connection with a given timeout. The websocket connection to the W
 The goroutine for handling incoming messages is started
 */
 func NewConn(timeout time.Duration) (*Conn, error) {
+	return NewConnWithClientName(timeout, "github.com/kaxap/go-whatsapp", "go-whatsapp")
+}
+
+func NewConnWithClientName(timeout time.Duration, clientName, shortClientName string) (*Conn, error) {
 	wac := &Conn{
 		handler:    make([]Handler, 0),
 		msgCount:   0,
 		msgTimeout: timeout,
 		Store:      newStore(),
 
-		longClientName:  "github.com/rhymen/go-whatsapp",
-		shortClientName: "go-whatsapp",
+		longClientName:  clientName,
+		shortClientName: shortClientName,
 	}
 	return wac, wac.connect()
 }
