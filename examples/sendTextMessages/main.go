@@ -29,7 +29,7 @@ func main() {
 		Info: whatsapp.MessageInfo{
 			RemoteJid: "number@s.whatsapp.net",
 		},
-		Text: "Message sent by github.com/Rhymen/go-whatsapp",
+		Text: "Message sent by github.com/AltairKaas/go-whatsapp",
 	}
 
 	msgId, err := wac.Send(msg)
